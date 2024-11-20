@@ -4,8 +4,6 @@
 
 package app;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modelo.Parseador;
 
 /**
@@ -16,9 +14,10 @@ public class Motor_IFA {
 
     public static void main(String[] args) {
         Parseador parser = new Parseador();
-        parser.seleccionarFichero();
+        parser.seleccionarFichero(); //MEDcasiALL son una pequeña parte para la prueba de indexar 10 solo
         try {
             parser.parsear();
+            //parser.borrar(""); //¿sera una opcion en el menu?
         } catch (Exception ex) {
             System.out.println("Error al parsear: "+ex.getMessage());
             System.exit(1);

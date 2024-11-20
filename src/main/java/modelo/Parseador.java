@@ -5,20 +5,11 @@
 package modelo;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import static java.lang.Thread.sleep;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -32,15 +23,11 @@ import org.apache.solr.common.SolrInputDocument;
  */
 public class Parseador {
 
-    private String expresionID; //no usado aun
-    private String expresionTexto;
     private File parsingFile;
     private SolrClient client;
     private ArrayList<SolrInputDocument> listDocs;
 
     public Parseador() {
-        this.expresionID = "I";
-        this.expresionTexto = "W";
         parsingFile = null;
         client = new HttpSolrClient.Builder("http://localhost:8983/solr").build();
         listDocs = new ArrayList<>();
@@ -58,7 +45,7 @@ public class Parseador {
         if (aproved == JFileChooser.APPROVE_OPTION) {
             parsingFile = tmp.getSelectedFile();
         } else {
-            //Introducir por teclado? Solicitar que elija alguno? Dialogo de salida?
+            System.out.println("Pues no hago nada.");
         }
 
     }
@@ -66,7 +53,7 @@ public class Parseador {
     private void addDocument(SolrInputDocument doc) {
 
         try {
-            final UpdateResponse updateResponse = client.add("MedColection", doc);
+            client.add("MedColection", doc);
             client.commit("MedColection");
         } catch (SolrServerException ex) {
             System.out.println("Error solrServer: " + ex.getMessage());
@@ -75,13 +62,23 @@ public class Parseador {
         }
     }
 
+    public void borrar(String query) throws SolrServerException, IOException {
+        String urlString = "http://localhost:8983/solr/MedColection";
+        SolrClient Solr = new HttpSolrClient.Builder(urlString).build();
+        SolrInputDocument doc = new SolrInputDocument();
+
+        Solr.deleteByQuery("*");
+        Solr.commit();
+        System.out.println("Todos los documentos borrados");
+    }
+
     public void parsear() throws Exception {
         if (parsingFile != null) {
             BufferedReader br = new BufferedReader(new FileReader(parsingFile));
             String line;
             StringBuilder wholePar = new StringBuilder();
             int documentCount = 0;
-            while ((line = br.readLine()) != null && documentCount < 11) {
+            while ((line = br.readLine()) != null) {
                 if (line.startsWith(".I")) {
                     if (wholePar.length() > 0) {
                         SolrInputDocument doc = new SolrInputDocument();
