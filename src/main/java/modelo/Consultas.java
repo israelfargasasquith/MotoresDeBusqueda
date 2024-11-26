@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 /**
@@ -24,25 +26,45 @@ public class Consultas {
         this.client = client;
     }
 
-    public void consultar() throws IOException {
-        SolrQuery query = new SolrQuery();
+    public void borrar(String query) throws SolrServerException, IOException {
+
+        SolrClient client = new HttpSolrClient.Builder("http://localhost:8983/solr/MedColection").build();
+        client.deleteByQuery(query);
+        client.commit();
+        System.out.println("Todos los documentos borrados");
+    }
+
+    public void consultar(int nConsultas, int nPalabras) throws IOException {
+        ArrayList<SolrQuery> queries = new ArrayList<>();
         Parseador p = new Parseador(client);
-        ArrayList<String> consultas = p.parsearConsultas(1, 5);
-        System.out.println("Consulta a lanzar: "+consultas.get(0));
-        query.setQuery("texto:"+consultas.get(0)).setRows(5).setFields("* score").addSort("score", SolrQuery.ORDER.desc);
-        QueryResponse rsp = null;
+        ArrayList<String> consultas = p.parsearConsultas(nConsultas, nPalabras);
+        for (String consulta : consultas) {
+
+            queries.add(new SolrQuery().setQuery("texto:" + consultas.get(0)).setRows(5).setFields("I,score,texto").addSort("score", SolrQuery.ORDER.desc));
+        }
+
+        ArrayList<QueryResponse> rsp = new ArrayList<>();
+        QueryResponse tmp = null;
+
         try {
-            rsp = client.query("MedColection", query);
+            for (SolrQuery query : queries) {
+                tmp = client.query("MedColection", query);
+                rsp.add(tmp);
+            }
             System.out.println("Query lanzada");
         } catch (SolrServerException ex) {
             System.out.println("Error server en query: " + ex.getMessage());
         } catch (IOException ex) {
             System.out.println("Error IO en query: " + ex.getMessage());
         }
-        SolrDocumentList docs = rsp.getResults();
-        System.out.println("***********************************\nMostramos los documentos recogidos");
-        for (int i = 0; i < docs.size(); ++i) {
-            System.out.println(docs.get(i));
+        SolrDocumentList docs = null;
+        for (QueryResponse queryResponse : rsp) {
+            docs = queryResponse.getResults();
+            System.out.println("***********************************\nMostramos los documentos recogidos");
+            for (SolrDocument doc : docs) {
+                System.out.println(doc);
+            }
+
         }
     }
 
