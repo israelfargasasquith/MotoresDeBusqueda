@@ -34,13 +34,59 @@ public class Consultas {
         System.out.println("Todos los documentos borrados");
     }
 
-    public void consultar(int nConsultas, int nPalabras) throws IOException {
+    public ArrayList<RespuestaTrec> consultasTrec() throws IOException {
+        ArrayList<SolrQuery> queries = new ArrayList<>();
+        ArrayList<RespuestaTrec> respuestasList = new ArrayList<>();
+        Parseador p = new Parseador(client);
+        ArrayList<String> consultas = p.parsearConsultas(30, 5);
+
+        for (String consulta : consultas) {
+            queries.add(new SolrQuery().setQuery("texto:" + consulta).setRows(1033).setFields("I,score").addSort("score", SolrQuery.ORDER.desc));
+        }
+
+        ArrayList<QueryResponse> rsp = new ArrayList<>();
+        QueryResponse tmp = null;
+
+        try {
+
+            for (SolrQuery query : queries) {
+                tmp = client.query("MedColection", query);
+                rsp.add(tmp);
+            }
+
+        } catch (SolrServerException ex) {
+            System.out.println("Error server en query: " + ex.getMessage());
+        } catch (IOException ex) {
+            System.out.println("Error IO en query: " + ex.getMessage());
+        }
+        SolrDocumentList docs = null;
+        RespuestaTrec respuesta = null;
+        int nConsulta = 1;
+        int nRanking = 0;
+        for (QueryResponse queryResponse : rsp) {
+            docs = queryResponse.getResults();
+            System.out.println("***********\nMostramos los documentos recogidos y los anadimos al array para trec\n***********");
+            System.out.println("NumFound: " + docs.getNumFound());
+            for (SolrDocument doc : docs) {
+                //System.out.println(doc.toString());
+                //     Consulta Q0  documento   ranking score     EQUIPO is the format of the file
+                //i.e: 1        Q0  3392        0       0.017277  ETSI
+                PILAR SUBSTRING DE I PARA QUITARNOS LOS [] Y HACER QUE EL CONTADOR Y EL RANKING SIRVAN
+                //respuesta  = new RespuestaTrec(""+nConsulta, doc.get("I").toString(), ""+nRanking, doc.get("score").toString());
+                //respuestasList.add(respuesta);
+            }
+        }
+
+        return respuestasList;
+    }
+
+    public void consultar(int nConsultas, int nPalabras, int nFilas) throws IOException {
         ArrayList<SolrQuery> queries = new ArrayList<>();
         Parseador p = new Parseador(client);
         ArrayList<String> consultas = p.parsearConsultas(nConsultas, nPalabras);
         for (String consulta : consultas) {
 
-            queries.add(new SolrQuery().setQuery("texto:" + consultas.get(0)).setRows(5).setFields("I,score,texto").addSort("score", SolrQuery.ORDER.desc));
+            queries.add(new SolrQuery().setQuery("texto:" + consultas.get(0)).setRows(nFilas).setFields("I,score").addSort("score", SolrQuery.ORDER.desc)); //añadir campo texto despues
         }
 
         ArrayList<QueryResponse> rsp = new ArrayList<>();
@@ -50,8 +96,9 @@ public class Consultas {
             for (SolrQuery query : queries) {
                 tmp = client.query("MedColection", query);
                 rsp.add(tmp);
+                System.out.println("**************************************" + "\nQuery lanzada: " + query.getQuery() + "\n**************************************");
             }
-            System.out.println("Query lanzada");
+
         } catch (SolrServerException ex) {
             System.out.println("Error server en query: " + ex.getMessage());
         } catch (IOException ex) {

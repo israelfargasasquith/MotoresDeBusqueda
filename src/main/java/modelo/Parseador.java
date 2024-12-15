@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,15 +25,23 @@ import org.apache.solr.common.SolrInputDocument;
  */
 public class Parseador {
 
-    private File parsingFile;
+    private File parsingCorpusFile;
+    private File parsingQueryFile;
     private SolrClient client;
+    private Map<String, String> tokenExcluidos;
 
     public Parseador(SolrClient client) {
-        parsingFile = null;
+        parsingCorpusFile = new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "corpusData" + File.separator + "MED.ALL");
+        parsingQueryFile = new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "corpusData" + File.separator + "MED.QRY");
         this.client = client;
+        this.tokenExcluidos = new HashMap<>();
+        String punctuation = "(),.-_?¿¡!\\{}[]:;\"<>|/@#$%^&*~`";
+        for (char c : punctuation.toCharArray()) {
+            tokenExcluidos.put(String.valueOf(c), "-");
+        }
     }
 
-    public void seleccionarFichero() {
+    public void seleccionarFicheroCorpus() {
         JFrame frame = new JFrame();
         frame.setAlwaysOnTop(true);
         frame.setVisible(true); //solamente para que el filechoser salga por encima de la consola...
@@ -41,18 +51,38 @@ public class Parseador {
         int aproved = tmp.showDialog(frame, JFileChooser.APPROVE_SELECTION);
         frame.dispose();
         if (aproved == JFileChooser.APPROVE_OPTION) {
-            parsingFile = tmp.getSelectedFile();
+            parsingCorpusFile = tmp.getSelectedFile();
         } else {
             System.out.println("Pues no hago nada.");
         }
 
     }
 
-    private void addDocument(SolrInputDocument doc) {
+    public void seleccionarFicheroConsultas() {
+        JFrame frame = new JFrame();
+        frame.setAlwaysOnTop(true);
+        frame.setVisible(true); //solamente para que el filechoser salga por encima de la consola...
+        frame.setLocationRelativeTo(null);
+        JFileChooser tmp = new JFileChooser();
+        tmp.setCurrentDirectory(new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "corpusData"));
+        int aproved = tmp.showDialog(frame, JFileChooser.APPROVE_SELECTION);
+        frame.dispose();
+        if (aproved == JFileChooser.APPROVE_OPTION) {
+            parsingQueryFile = tmp.getSelectedFile();
+        } else {
+            System.out.println("Pues no hago nada.");
+        }
+
+    }
+
+    private void addDocument(ArrayList<SolrInputDocument> docList) {
 
         try {
-            client.add("MedColection", doc);
-            client.commit("MedColection");
+            for (SolrInputDocument solrInputDocument : docList) {
+                client.add("MedColection", solrInputDocument);
+                client.commit("MedColection");
+            }
+
         } catch (SolrServerException ex) {
             System.out.println("Error solrServer: " + ex.getMessage());
         } catch (IOException ex) {
@@ -61,19 +91,20 @@ public class Parseador {
     }
 
     public ArrayList<String> parsearConsultas(int nConsultas, int nPalabras) throws FileNotFoundException, IOException {
-        ArrayList<String> consultas = new ArrayList<>();
-        this.seleccionarFichero();
-        if (parsingFile != null) { //TODO Hacer refactor de este metodo y el siguiente
-            BufferedReader br = new BufferedReader(new FileReader(parsingFile));
+        if (parsingQueryFile != null) {
+
+            BufferedReader br = new BufferedReader(new FileReader(parsingQueryFile));
             String line;
             StringBuilder wholeQuery = new StringBuilder();
             int queryCount = 0;
-            while ((line = br.readLine()) != null && queryCount < nConsultas) { //Hay que añadir alguna forma de controlar que se hagan todas las queries
+            ArrayList<String> consultas = new ArrayList<>();
+            String tmp;
+            String appendable = "";
+            while ((line = br.readLine()) != null && queryCount < nConsultas) {
                 if (line.startsWith(".I")) {
                     if (wholeQuery.length() > 0) {
-                        if (nPalabras <= 0) { //toda la palabra
+                        if (nPalabras <= 0) {
                             consultas.add(wholeQuery.toString());
-                            wholeQuery.setLength(0);
                         } else {
                             String[] splitted = wholeQuery.toString().split("\\s+");
                             int i = 0;
@@ -91,34 +122,78 @@ public class Parseador {
                             }
                             consultas.add(queryString);
                         }
+                        wholeQuery.setLength(0);
                         queryCount++;
                     }
-                    System.out.println("***********************************************\nStarted writing Query" + (queryCount));
                 } else if (line.startsWith(".W")) {
                 } else {
-                    System.out.println(line);
-                    wholeQuery.append(line.strip()).append(" ");
+                    tmp = line.strip();
+                    for (char c : tmp.toCharArray()) {
+                        if (this.tokenExcluidos.get(String.valueOf(c)) == null) {
+                            appendable += String.valueOf(c);
+                        } 
+                    }
+
+                    wholeQuery.append(appendable);
+                    appendable = "";
                 }
             }
+
+            if (wholeQuery.length() > 0 && queryCount < nConsultas) {
+                if (nPalabras <= 0) {
+                    consultas.add(wholeQuery.toString());
+                } else {
+                    String[] splitted = wholeQuery.toString().split("\\s+");
+                    StringBuilder queryString = new StringBuilder();
+
+                    for (int i = 0; i < Math.min(nPalabras, splitted.length); i++) {
+                        if (i > 0) {
+                            queryString.append("+");
+                        }
+                        queryString.append(splitted[i]);
+                    }
+                    appendable="";
+                     tmp = queryString.toString();
+                    for (char c : tmp.toCharArray()) {
+                        if (this.tokenExcluidos.get(String.valueOf(c)) == null) {
+                            appendable += String.valueOf(c);
+                        } 
+                    }
+
+                    consultas.add(appendable);
+                }
+            }
+
+            br.close();
+            return consultas;
+        } else {
+            return null;
         }
-        return consultas;
+
     }
 
-    public void parsear() throws Exception {
-        this.seleccionarFichero();
-        if (parsingFile != null) {
-            BufferedReader br = new BufferedReader(new FileReader(parsingFile));
+    public void parsearCorpus() throws Exception {
+        if (parsingCorpusFile != null) {
+            BufferedReader br = new BufferedReader(new FileReader(parsingCorpusFile));
             String line;
             StringBuilder wholePar = new StringBuilder();
+            ArrayList<SolrInputDocument> docList = new ArrayList<>();
+            SolrInputDocument tmp;
+            String ridoffI = null;
+            int fixingI;
             int documentCount = 0;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith(".I")) {
                     if (wholePar.length() > 0) {
-                        SolrInputDocument doc = new SolrInputDocument();
-                        doc.addField("id", UUID.randomUUID().toString());
-                        doc.addField("I", line);
-                        doc.addField("texto", wholePar);
-                        this.addDocument(doc);
+                        tmp = new SolrInputDocument();
+                        tmp.addField("id", UUID.randomUUID().toString());
+                        ridoffI = line.substring(2).strip();
+                        fixingI = Integer.parseInt(ridoffI);
+                        fixingI--;
+                        ridoffI = ""+fixingI;
+                        tmp.addField("I", ridoffI);
+                        tmp.addField("texto", wholePar.toString());
+                        docList.add(tmp);
                         wholePar.setLength(0);
                     }
                     documentCount++;
@@ -132,12 +207,12 @@ public class Parseador {
             if (wholePar.length() > 0) { //Ultimo documento de la lista
                 SolrInputDocument doc = new SolrInputDocument();
                 doc.addField("id", UUID.randomUUID().toString());
-                doc.addField("I", "Documento" + documentCount);
+                doc.addField("I", ""+1033);
                 doc.addField("texto", wholePar.toString());
-                this.addDocument(doc);
+                docList.add(doc);
                 System.out.println("***********************************************\nFinished writing Documento" + documentCount + ".txt");
             }
-
+            this.addDocument(docList);
         }
 
     }
