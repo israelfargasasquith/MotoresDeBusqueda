@@ -71,10 +71,13 @@ public class Consultas {
                 //System.out.println(doc.toString());
                 //     Consulta Q0  documento   ranking score     EQUIPO is the format of the file
                 //i.e: 1        Q0  3392        0       0.017277  ETSI
-                PILAR SUBSTRING DE I PARA QUITARNOS LOS [] Y HACER QUE EL CONTADOR Y EL RANKING SIRVAN
-                //respuesta  = new RespuestaTrec(""+nConsulta, doc.get("I").toString(), ""+nRanking, doc.get("score").toString());
-                //respuestasList.add(respuesta);
+                String iTmp = doc.get("I").toString().substring(1, doc.get("I").toString().length() - 1);
+                respuesta = new RespuestaTrec("" + nConsulta, iTmp, "" + nRanking, doc.get("score").toString());
+                respuestasList.add(respuesta);
+                nRanking++;
             }
+            nConsulta++;
+            nRanking=0;
         }
 
         return respuestasList;

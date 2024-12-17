@@ -18,20 +18,6 @@ public class Motor_IFA {
 
     //TODO Organizar las clases consultas y parser
     public static void main(String[] args) throws IOException {
-        /*ProcessBuilder builder = new ProcessBuilder(
-                "cmd.exe", "/c", "cd \"C:\\ && dir");
-        builder.redirectErrorStream(true);
-        Process p = builder.start();
-        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String line;
-        while (true) {
-            line = r.readLine();
-            if (line == null) {
-                break;
-            }
-            System.out.println(line);
-        }*/
-        
         ControladorPrincipal cp = new ControladorPrincipal();
         cp.menuPrincipal();
         System.exit(0);
