@@ -19,7 +19,7 @@ public class Motor_IFA {
     //TODO Organizar las clases consultas y parser
     public static void main(String[] args) throws IOException {
         ControladorPrincipal cp = new ControladorPrincipal();
-        cp.menuPrincipal();
-        System.exit(0);
+        //cp.menuPrincipal();
+        cp.lanzarApp();
     }
 }

@@ -6,6 +6,8 @@ package modelo;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -26,6 +28,27 @@ public class Consultas {
         this.client = client;
     }
 
+    public SolrDocumentList buscar(String consulta, int nFilas, int nPalabras) {
+        SolrQuery query = new SolrQuery().setQuery("texto:" + consulta).setRows(nFilas).setFields("I,score,texto").addSort("score", SolrQuery.ORDER.desc);
+        QueryResponse response = null;
+        SolrDocumentList docs = null;
+        try {
+            response = client.query("MedColection", query);
+        } catch (SolrServerException ex) {
+            System.out.println("Error al realizar la consulta " + consulta + " con error: " + ex.getMessage());
+        } catch (IOException ex) {
+            System.out.println("Error IO al realizar la consulta " + consulta + " con error: " + ex.getMessage());
+        }
+
+        docs = response.getResults();
+
+        for (SolrDocument doc : docs) {
+            System.out.println(doc.toString());
+        }
+        return docs;
+
+    }
+
     public void borrar(String query) throws SolrServerException, IOException {
 
         SolrClient client = new HttpSolrClient.Builder("http://localhost:8983/solr/MedColection").build();
@@ -39,7 +62,7 @@ public class Consultas {
         ArrayList<RespuestaTrec> respuestasList = new ArrayList<>();
         Parseador p = new Parseador(client);
         ArrayList<String> consultas = p.parsearConsultas(30, nPalabras);
-        if(nFilas == 0){
+        if (nFilas == 0) {
             nFilas = 1033;
         }
         for (String consulta : consultas) {
@@ -89,16 +112,19 @@ public class Consultas {
         ArrayList<SolrQuery> queries = new ArrayList<>();
         Parseador p = new Parseador(client);
         ArrayList<String> consultas = p.parsearConsultas(nConsultas, nPalabras);
+
+        ArrayList<QueryResponse> rsp = new ArrayList<>();
+        QueryResponse tmp = null;
+
+        SolrDocumentList docs = null;
+
         if (nFilas == 0) {
             nFilas = 1033;
         }
         for (String consulta : consultas) {
 
-            queries.add(new SolrQuery().setQuery("texto:" + consultas.get(0)).setRows(nFilas).setFields("I,score").addSort("score", SolrQuery.ORDER.desc)); //añadir campo texto despues
+            queries.add(new SolrQuery().setQuery("texto:" + consulta).setRows(nFilas).setFields("I,score").addSort("score", SolrQuery.ORDER.desc)); //añadir campo texto despues
         }
-
-        ArrayList<QueryResponse> rsp = new ArrayList<>();
-        QueryResponse tmp = null;
 
         try {
             for (SolrQuery query : queries) {
@@ -112,7 +138,7 @@ public class Consultas {
         } catch (IOException ex) {
             System.out.println("Error IO en query: " + ex.getMessage());
         }
-        SolrDocumentList docs = null;
+
         for (QueryResponse queryResponse : rsp) {
             docs = queryResponse.getResults();
             System.out.println("***********************************\nMostramos los documentos recogidos");
