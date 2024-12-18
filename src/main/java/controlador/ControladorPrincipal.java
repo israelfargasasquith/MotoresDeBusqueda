@@ -37,6 +37,7 @@ public class ControladorPrincipal {
 
     public void menuPrincipal() {
         int opc = -1;
+        int nPalabras, nFilas, nConsultas;
         do {
             System.out.println("Saludos, bienvenido al motor IFA, Que desea?");
             System.out.println("1.- Borrar el core MedColection");
@@ -73,9 +74,7 @@ public class ControladorPrincipal {
                     break;
 
                 case 3:
-                    int nPalabras,
-                     nFilas,
-                     nConsultas;
+
                     System.out.println("Cuantas consultas quiere procesar?");
                     nConsultas = keyboard.nextInt();
                     System.out.println("Cuantas palabras por consulta (0 para toda la frase)?");
@@ -100,8 +99,12 @@ public class ControladorPrincipal {
                     parser.seleccionarFicheroCorpus();
                     break;
                 case 6: {
+                    System.out.println("Cuantas palabras por consulta (0 para toda la frase)?");
+                    nPalabras = keyboard.nextInt();
+                    System.out.println("Cuantas filas de resultados quiere mostrar (0 para todas)?");
+                    nFilas = keyboard.nextInt();
                     try {
-                        generadorFicheroTrec.generarFicheroConsultas(consultas.consultasTrec());
+                        generadorFicheroTrec.generarFicheroConsultas(consultas.consultasTrec(nPalabras,nFilas));
                     } catch (IOException ex) {
                         System.out.println("Error consultasTrec :" + ex.getMessage());
                     }

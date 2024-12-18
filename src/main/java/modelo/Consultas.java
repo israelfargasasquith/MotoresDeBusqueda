@@ -34,14 +34,16 @@ public class Consultas {
         System.out.println("Todos los documentos borrados");
     }
 
-    public ArrayList<RespuestaTrec> consultasTrec() throws IOException {
+    public ArrayList<RespuestaTrec> consultasTrec(int nPalabras, int nFilas) throws IOException {
         ArrayList<SolrQuery> queries = new ArrayList<>();
         ArrayList<RespuestaTrec> respuestasList = new ArrayList<>();
         Parseador p = new Parseador(client);
-        ArrayList<String> consultas = p.parsearConsultas(30, 5);
-
+        ArrayList<String> consultas = p.parsearConsultas(30, nPalabras);
+        if(nFilas == 0){
+            nFilas = 1033;
+        }
         for (String consulta : consultas) {
-            queries.add(new SolrQuery().setQuery("texto:" + consulta).setRows(1033).setFields("I,score").addSort("score", SolrQuery.ORDER.desc));
+            queries.add(new SolrQuery().setQuery("texto:" + consulta).setRows(nFilas).setFields("I,score").addSort("score", SolrQuery.ORDER.desc));
         }
 
         ArrayList<QueryResponse> rsp = new ArrayList<>();
@@ -77,7 +79,7 @@ public class Consultas {
                 nRanking++;
             }
             nConsulta++;
-            nRanking=0;
+            nRanking = 0;
         }
 
         return respuestasList;
@@ -87,6 +89,9 @@ public class Consultas {
         ArrayList<SolrQuery> queries = new ArrayList<>();
         Parseador p = new Parseador(client);
         ArrayList<String> consultas = p.parsearConsultas(nConsultas, nPalabras);
+        if (nFilas == 0) {
+            nFilas = 1033;
+        }
         for (String consulta : consultas) {
 
             queries.add(new SolrQuery().setQuery("texto:" + consultas.get(0)).setRows(nFilas).setFields("I,score").addSort("score", SolrQuery.ORDER.desc)); //añadir campo texto despues

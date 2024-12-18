@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -104,7 +105,12 @@ public class Parseador {
                 if (line.startsWith(".I")) {
                     if (wholeQuery.length() > 0) {
                         if (nPalabras <= 0) {
-                            consultas.add(wholeQuery.toString());
+                            String splitWhole[] = wholeQuery.toString().split("\\s+");
+                            String wholeTogether = splitWhole[0];
+                            for (int i = 1; i < splitWhole.length; i++) {
+                                wholeTogether += "+" + splitWhole[i];
+                            }
+                            consultas.add(wholeTogether);
                         } else {
                             String[] splitted = wholeQuery.toString().split("\\s+");
                             int i = 0;
@@ -131,7 +137,7 @@ public class Parseador {
                     for (char c : tmp.toCharArray()) {
                         if (this.tokenExcluidos.get(String.valueOf(c)) == null) {
                             appendable += String.valueOf(c);
-                        } 
+                        }
                     }
 
                     wholeQuery.append(appendable);
@@ -141,7 +147,12 @@ public class Parseador {
 
             if (wholeQuery.length() > 0 && queryCount < nConsultas) {
                 if (nPalabras <= 0) {
-                    consultas.add(wholeQuery.toString());
+                    String splitWhole[] = wholeQuery.toString().split("\\s+");
+                    String wholeTogether = splitWhole[0];
+                    for (int i=1;i<splitWhole.length;i++) {
+                        wholeTogether += "+" + splitWhole[i];
+                    }
+                    consultas.add(wholeTogether);
                 } else {
                     String[] splitted = wholeQuery.toString().split("\\s+");
                     StringBuilder queryString = new StringBuilder();
@@ -152,12 +163,12 @@ public class Parseador {
                         }
                         queryString.append(splitted[i]);
                     }
-                    appendable="";
-                     tmp = queryString.toString();
+                    appendable = "";
+                    tmp = queryString.toString();
                     for (char c : tmp.toCharArray()) {
                         if (this.tokenExcluidos.get(String.valueOf(c)) == null) {
                             appendable += String.valueOf(c);
-                        } 
+                        }
                     }
 
                     consultas.add(appendable);
@@ -190,7 +201,7 @@ public class Parseador {
                         ridoffI = line.substring(2).strip();
                         fixingI = Integer.parseInt(ridoffI);
                         fixingI--;
-                        ridoffI = ""+fixingI;
+                        ridoffI = "" + fixingI;
                         tmp.addField("I", ridoffI);
                         tmp.addField("texto", wholePar.toString());
                         docList.add(tmp);
@@ -207,7 +218,7 @@ public class Parseador {
             if (wholePar.length() > 0) { //Ultimo documento de la lista
                 SolrInputDocument doc = new SolrInputDocument();
                 doc.addField("id", UUID.randomUUID().toString());
-                doc.addField("I", ""+1033);
+                doc.addField("I", "" + 1033);
                 doc.addField("texto", wholePar.toString());
                 docList.add(doc);
                 System.out.println("***********************************************\nFinished writing Documento" + documentCount + ".txt");
