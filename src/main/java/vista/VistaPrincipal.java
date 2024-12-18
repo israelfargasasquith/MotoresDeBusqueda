@@ -31,14 +31,14 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         fieldBuscador = new javax.swing.JTextField();
         botonBuscar = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jScrollBar1 = new javax.swing.JScrollBar();
+        scrollPaneResultados = new javax.swing.JScrollPane();
+        textAreaResultados = new javax.swing.JTextArea();
         jSeparator1 = new javax.swing.JSeparator();
         menuPrincipal = new javax.swing.JMenuBar();
         menuOpciones = new javax.swing.JMenu();
         menuOpcionesQueries = new javax.swing.JMenuItem();
         menuOpcionesCorpus = new javax.swing.JMenuItem();
+        menuEvaluacion = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("vistaPrincipalFrame"); // NOI18N
@@ -60,9 +60,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         botonBuscar.setText("Buscar");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        textAreaResultados.setColumns(20);
+        textAreaResultados.setRows(5);
+        scrollPaneResultados.setViewportView(textAreaResultados);
 
         javax.swing.GroupLayout panelPrincipalLayout = new javax.swing.GroupLayout(panelPrincipal);
         panelPrincipal.setLayout(panelPrincipalLayout);
@@ -85,9 +85,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
             .addComponent(jSeparator1)
             .addGroup(panelPrincipalLayout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 569, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollPaneResultados, javax.swing.GroupLayout.PREFERRED_SIZE, 569, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         panelPrincipalLayout.setVerticalGroup(
@@ -103,9 +101,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22)
-                .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(scrollPaneResultados, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
@@ -116,6 +112,14 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         menuOpcionesCorpus.setText("Mostrar Opciones Corpus");
         menuOpciones.add(menuOpcionesCorpus);
+
+        menuEvaluacion.setText("Mostrar Opciones Evaluacion");
+        menuEvaluacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuEvaluacionActionPerformed(evt);
+            }
+        });
+        menuOpciones.add(menuEvaluacion);
 
         menuPrincipal.add(menuOpciones);
 
@@ -141,6 +145,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_fieldBuscadorActionPerformed
 
+    private void menuEvaluacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEvaluacionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuEvaluacionActionPerformed
+
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -148,14 +156,14 @@ public class VistaPrincipal extends javax.swing.JFrame {
     public javax.swing.JTextField fieldBuscador;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollBar jScrollBar1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextArea jTextArea1;
+    public javax.swing.JMenuItem menuEvaluacion;
     public javax.swing.JMenu menuOpciones;
     public javax.swing.JMenuItem menuOpcionesCorpus;
     public javax.swing.JMenuItem menuOpcionesQueries;
     public javax.swing.JMenuBar menuPrincipal;
     public javax.swing.JPanel panelPrincipal;
+    public javax.swing.JScrollPane scrollPaneResultados;
+    public javax.swing.JTextArea textAreaResultados;
     // End of variables declaration//GEN-END:variables
 }

@@ -28,7 +28,7 @@ public class GeneradorTrec_File {
         trecDoc = new File(filePath + "trec_solr_file");
     }
 
-    public void generarFicheroConsultas(ArrayList<RespuestaTrec> respuestas) {
+    public String generarFicheroConsultas(ArrayList<RespuestaTrec> respuestas) {
         //Consulta Q0 documento ranking score EQUIPO is the format of the file
 
         try {
@@ -55,32 +55,38 @@ public class GeneradorTrec_File {
         } catch (IOException ex) {
             System.out.println("Error al generar el fichero trece escritor cerrar: " + ex.getMessage());
         }
-        
-        this.evaluador();
+
+       return this.evaluador();
     }
 
-    private void evaluador() {
+    private String evaluador() {
         String exePath = filePath + "treceval.exe";
         String relPath = filePath + "MED_rel.TREC";
         String solrPath = filePath + "trec_solr_file";
+
+        File output = new File(filePath + "evaluation.txt");
+
         ProcessBuilder evaluation = new ProcessBuilder();
         evaluation.command(exePath, relPath, solrPath);
+        evaluation.redirectOutput(output);
         try {
             Process process = evaluation.start();
+            int exitCode = process.waitFor();
+            System.out.println("Process exited with code: " + exitCode);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            /*  BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
             }
             int exitCode = process.waitFor();
-            System.out.println("Process exited with code: " + exitCode);
-
+            System.out.println("Process exited with code: " + exitCode);*/
         } catch (IOException ex) {
             System.out.println("Error IO en el proceso de evaluacion: " + ex.getMessage());
         } catch (InterruptedException ex) {
             System.out.println("Error de interrupcion en el proceso de evaluacion: " + ex.getMessage());
         }
+        return output.getAbsolutePath();
     }
 
 }

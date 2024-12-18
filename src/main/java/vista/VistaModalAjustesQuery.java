@@ -31,10 +31,13 @@ public class VistaModalAjustesQuery extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         checkBoxTodasLasPalabras = new javax.swing.JCheckBox();
         checkBoxTodasLasFilas = new javax.swing.JCheckBox();
-        sliderNPalabras = new javax.swing.JSlider();
-        sliderNFilas = new javax.swing.JSlider();
         labelNFilas = new javax.swing.JLabel();
         labelNPalabras = new javax.swing.JLabel();
+        textNFilas = new javax.swing.JTextField();
+        textNPalabras = new javax.swing.JTextField();
+        actualizarNFilas = new javax.swing.JButton();
+        actualizarNPalabras = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -51,6 +54,14 @@ public class VistaModalAjustesQuery extends javax.swing.JDialog {
 
         labelNPalabras.setText("-");
 
+        actualizarNFilas.setText("Actualizar");
+        actualizarNFilas.setActionCommand("ActualizarNFilas");
+
+        actualizarNPalabras.setText("Actualizar");
+        actualizarNPalabras.setActionCommand("ActualizarNPalabras");
+
+        jLabel3.setText("<html> 0 implica todas las <br>palabras o filas</html>");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -58,20 +69,29 @@ public class VistaModalAjustesQuery extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(checkBoxTodasLasPalabras)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(28, 28, 28)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(sliderNPalabras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(sliderNFilas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(checkBoxTodasLasPalabras))
+                .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labelNFilas)
-                    .addComponent(labelNPalabras))
-                .addGap(30, 30, 30))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(actualizarNPalabras)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(textNFilas, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(textNPalabras, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(actualizarNFilas))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 137, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(labelNFilas)
+                                    .addComponent(labelNPalabras))))
+                        .addGap(30, 30, 30))))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(43, 43, 43)
@@ -81,18 +101,27 @@ public class VistaModalAjustesQuery extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(51, 51, 51)
+                .addGap(48, 48, 48)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(labelNFilas)
-                    .addComponent(sliderNFilas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE)
+                    .addComponent(textNFilas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(actualizarNFilas)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(53, 53, 53)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(sliderNPalabras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelNPalabras))
-                .addGap(36, 36, 36)
-                .addComponent(checkBoxTodasLasPalabras)
+                    .addComponent(labelNPalabras)
+                    .addComponent(textNPalabras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(checkBoxTodasLasPalabras))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(actualizarNPalabras)))
                 .addGap(52, 52, 52))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -107,13 +136,16 @@ public class VistaModalAjustesQuery extends javax.swing.JDialog {
   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JButton actualizarNFilas;
+    public javax.swing.JButton actualizarNPalabras;
     public javax.swing.JCheckBox checkBoxTodasLasFilas;
     public javax.swing.JCheckBox checkBoxTodasLasPalabras;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     public javax.swing.JLabel labelNFilas;
     public javax.swing.JLabel labelNPalabras;
-    public javax.swing.JSlider sliderNFilas;
-    public javax.swing.JSlider sliderNPalabras;
+    public javax.swing.JTextField textNFilas;
+    public javax.swing.JTextField textNPalabras;
     // End of variables declaration//GEN-END:variables
 }

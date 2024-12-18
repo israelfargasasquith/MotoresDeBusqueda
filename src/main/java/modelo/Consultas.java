@@ -43,7 +43,7 @@ public class Consultas {
         docs = response.getResults();
 
         for (SolrDocument doc : docs) {
-            System.out.println(doc.toString());
+            System.out.println("I: " + doc.get("I").toString() + " Score: " + doc.get("score").toString() + " Texto: " + doc.get("texto") + "\n");
         }
         return docs;
 

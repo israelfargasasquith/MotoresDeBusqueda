@@ -31,6 +31,17 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
               </AuxValues>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuEvaluacion">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Mostrar Opciones Evaluacion"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuEvaluacionActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+              </AuxValues>
+            </MenuItem>
           </SubComponents>
         </Menu>
       </SubComponents>
@@ -110,9 +121,7 @@
               <Component id="jSeparator1" alignment="0" max="32767" attributes="0"/>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" pref="569" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollBar1" min="-2" max="-2" attributes="0"/>
+                  <Component id="scrollPaneResultados" min="-2" pref="569" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -131,10 +140,7 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane1" min="-2" pref="268" max="-2" attributes="0"/>
-                      <Component id="jScrollBar1" min="-2" pref="260" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="scrollPaneResultados" min="-2" pref="268" max="-2" attributes="0"/>
                   <EmptySpace pref="26" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -173,23 +179,25 @@
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
           </AuxValues>
         </Component>
-        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+        <Container class="javax.swing.JScrollPane" name="scrollPaneResultados">
           <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTextArea" name="jTextArea1">
+            <Component class="javax.swing.JTextArea" name="textAreaResultados">
               <Properties>
                 <Property name="columns" type="int" value="20"/>
                 <Property name="rows" type="int" value="5"/>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JScrollBar" name="jScrollBar1">
-        </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator1">
         </Component>
       </SubComponents>
