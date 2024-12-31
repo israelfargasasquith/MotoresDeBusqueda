@@ -84,7 +84,7 @@ public class ControladorPrincipal implements ActionListener {
         nFilas = 15;
     }
 
-    private void lanzarSolr() {
+   /* private void lanzarSolr() {
         String pathSolr = "C:" + File.separator + "Users" + File.separator + "israe" + File.separator + "Desktop" + File.separator + "solr-8.11.4" + File.separator + "bin" + File.separator + "solr";
         String commandArrancar = "start";
 
@@ -97,7 +97,7 @@ public class ControladorPrincipal implements ActionListener {
         } catch (IOException ex) {
             System.out.println("Error al lanzar Solrj: " + ex.getMessage());
         }
-    } //No funcional aun 
+    } //No funcional aun */
 
     public void lanzarApp() {
         vistaPrincipal.setVisible(true);
