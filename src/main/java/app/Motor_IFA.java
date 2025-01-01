@@ -3,12 +3,9 @@
  */
 package app;
 
-import controlador.ControladorPrincipal;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStreamReader;
 
 /**
  *
@@ -18,8 +15,40 @@ public class Motor_IFA {
 
     //TODO Organizar las clases consultas y parser
     public static void main(String[] args) throws IOException {
-        ControladorPrincipal cp = new ControladorPrincipal();
-        //cp.menuPrincipal();
-        cp.lanzarApp();
+
+        String query = "\"63 year old woman with history of CAD presented to ER\"";
+
+        // Call external Python script
+        ProcessBuilder pb = new ProcessBuilder("python", 
+                "C:\\Users\\israe\\Documents\\Ner Model\\queryEnricher.py", query);
+        Process process = pb.start();
+
+        // Read output
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder output = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            output.append(line).append("\n");
+        }
+        System.out.println("Output: " + output.toString().trim());
     }
-}
+        
+        
+        
+//        try {
+//            StringWriter writer = new StringWriter();
+//            ScriptContext context = new SimpleScriptContext();
+//            context.setWriter(writer);
+//
+//            ScriptEngineManager manager = new ScriptEngineManager();
+//            ScriptEngine engine = manager.getEngineByName("python");
+//            engine.eval(new FileReader("C:\\Users\\israe\\Documents\\Ner Model\\python example.py  hola"), context);
+//            System.out.println("Output: " + writer.toString().trim());
+//        } catch (IOException | ScriptException ex) {
+//            System.out.println("Error: " + ex.getMessage());
+//        }
+//ControladorPrincipal cp = new ControladorPrincipal();
+        //cp.menuPrincipal();
+        //cp.lanzarApp();
+    }
+//}

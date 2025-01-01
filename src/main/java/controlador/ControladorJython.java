@@ -4,14 +4,11 @@
  */
 package controlador;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.StringWriter;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 
 /**
  *
@@ -19,15 +16,22 @@ import javax.script.SimpleScriptContext;
  */
 public class ControladorJython {
     
-    public void llamandoTest() throws FileNotFoundException, ScriptException{
-        StringWriter writer = new StringWriter();
-        ScriptContext context = new SimpleScriptContext();
-        context.setWriter(writer);
+    public void llamandoTest() throws FileNotFoundException, ScriptException, IOException{
+           String query = "hola";
 
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("python");
-        engine.eval(new FileReader("C:\\Users\\israe\\Documents\\Ner Model\\example.py"), context);
-        System.out.println("Output: "+writer.toString().trim());
+        // Call external Python script
+        ProcessBuilder pb = new ProcessBuilder("python", 
+                "C:\\Users\\israe\\Documents\\Ner Model\\queryEnricher.py", query);
+        Process process = pb.start();
+
+        // Read output
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder output = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            output.append(line).append("\n");
+        }
+        System.out.println("Output: " + output.toString().trim());
     }
     
 }
