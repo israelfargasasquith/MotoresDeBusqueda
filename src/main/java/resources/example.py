@@ -20,4 +20,5 @@ if __name__ == "__main__":
     # Read input from Jython call
     input_text = sys.argv[1]  # Receive input parameter
     result = input_text.upper()
+    #print("hola")
     print(result)
