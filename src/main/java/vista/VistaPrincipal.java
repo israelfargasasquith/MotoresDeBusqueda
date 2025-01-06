@@ -31,9 +31,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         fieldBuscador = new javax.swing.JTextField();
         botonBuscar = new javax.swing.JButton();
-        scrollPaneResultados = new javax.swing.JScrollPane();
-        textAreaResultados = new javax.swing.JTextArea();
         jSeparator1 = new javax.swing.JSeparator();
+        scrollResultados = new javax.swing.JScrollPane();
+        textResultados = new javax.swing.JTextPane();
         menuPrincipal = new javax.swing.JMenuBar();
         menuOpciones = new javax.swing.JMenu();
         menuOpcionesQueries = new javax.swing.JMenuItem();
@@ -60,9 +60,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         botonBuscar.setText("Buscar");
 
-        textAreaResultados.setColumns(20);
-        textAreaResultados.setRows(5);
-        scrollPaneResultados.setViewportView(textAreaResultados);
+        scrollResultados.setViewportView(textResultados);
 
         javax.swing.GroupLayout panelPrincipalLayout = new javax.swing.GroupLayout(panelPrincipal);
         panelPrincipal.setLayout(panelPrincipalLayout);
@@ -84,8 +82,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addComponent(jSeparator1)
             .addGroup(panelPrincipalLayout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(scrollPaneResultados, javax.swing.GroupLayout.PREFERRED_SIZE, 569, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(scrollResultados, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         panelPrincipalLayout.setVerticalGroup(
@@ -100,9 +98,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
                     .addComponent(botonBuscar))
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22)
-                .addComponent(scrollPaneResultados, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(scrollResultados, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         menuOpciones.setText("Ajustes");
@@ -163,7 +161,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     public javax.swing.JMenuItem menuOpcionesQueries;
     public javax.swing.JMenuBar menuPrincipal;
     public javax.swing.JPanel panelPrincipal;
-    public javax.swing.JScrollPane scrollPaneResultados;
-    public javax.swing.JTextArea textAreaResultados;
+    public javax.swing.JScrollPane scrollResultados;
+    public javax.swing.JTextPane textResultados;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,6 +4,7 @@
  */
 package controlador;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -16,6 +17,11 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import modelo.Consultas;
 import modelo.GeneradorTrec_File;
 import modelo.Parseador;
@@ -57,14 +63,12 @@ public class ControladorPrincipal implements ActionListener {
         consultas = new Consultas(client);
         generadorFicheroTrec = new GeneradorTrec_File();
 
-        
         vistaPrincipal = new VistaPrincipal();
-        vistaPrincipal.scrollPaneResultados.getViewport().setView(vistaPrincipal.textAreaResultados);
-        vistaPrincipal.textAreaResultados.setEditable(false);
-        vistaPrincipal.scrollPaneResultados.createVerticalScrollBar();
+        vistaPrincipal.scrollResultados.getViewport().setView(vistaPrincipal.textResultados);
+        vistaPrincipal.textResultados.setEditable(false);
+        vistaPrincipal.scrollResultados.createVerticalScrollBar();
         vistaPrincipal.setVisible(false);
         vistaPrincipal.setLocationRelativeTo(null);
-        
 
         vistaAjustesQueries = new VistaModalAjustesQuery(vistaPrincipal, true);
         vistaAjustesQueries.setVisible(false);
@@ -84,7 +88,7 @@ public class ControladorPrincipal implements ActionListener {
         nFilas = 15;
     }
 
-   /* private void lanzarSolr() {
+    /* private void lanzarSolr() {
         String pathSolr = "C:" + File.separator + "Users" + File.separator + "israe" + File.separator + "Desktop" + File.separator + "solr-8.11.4" + File.separator + "bin" + File.separator + "solr";
         String commandArrancar = "start";
 
@@ -98,44 +102,76 @@ public class ControladorPrincipal implements ActionListener {
             System.out.println("Error al lanzar Solrj: " + ex.getMessage());
         }
     } //No funcional aun */
-
     public void lanzarApp() {
         vistaPrincipal.setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        SimpleAttributeSet boldSet = new SimpleAttributeSet();
+        StyleConstants.setBold(boldSet, true);
+        StyleConstants.setFontSize(boldSet, 13);
+        StyleConstants.setUnderline(boldSet, true);
+
         String consulta = "";
         switch (e.getActionCommand()) {
             case "Buscar":
+                vistaPrincipal.textResultados.setText("");
                 consulta = vistaPrincipal.fieldBuscador.getText();
                 SolrDocumentList docs = consultas.buscar(consulta, nFilas, nPalabras);
-                //System.out.println("I: " + doc.get("I").toString() + " Score: " + doc.get("score").toString() + " Texto: " + doc.get("texto") + "\n");
+                StyledDocument docMostrar = vistaPrincipal.textResultados.getStyledDocument();
                 for (SolrDocument doc : docs) {
-                    vistaPrincipal.textAreaResultados.append("I: " + doc.get("I").toString() + " Score: " + doc.get("score").toString() + " Texto: " + doc.get("texto") + "\n");
+                    try {
+                        docMostrar.insertString(docMostrar.getLength(), "I: " + doc.get("I").toString() + " Score: " + doc.get("score").toString() + "\n", boldSet);
+                    } catch (BadLocationException ex) {
+                        System.out.println("Error: " + ex.getLocalizedMessage());
+                    }
+                    try {
+                        this.formatear(doc.get("texto").toString(), docMostrar);
+                    } catch (BadLocationException ex) {
+                        System.out.println("Error: " + ex.getLocalizedMessage());
+                    }
                 }
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        vistaPrincipal.scrollResultados.getVerticalScrollBar().setValue(0);
+                    }
+                }
+                );
+
                 break;
             case "Mostrar Opciones Queries":
-                vistaAjustesQueries.labelNFilas.setText("" + nFilas);
-                vistaAjustesQueries.labelNPalabras.setText("" + nPalabras);
-                vistaAjustesQueries.setVisible(true);
-                vistaAjustesQueries.setModal(true);
+                vistaAjustesQueries.labelNFilas.setText(
+                        "" + nFilas);
+                vistaAjustesQueries.labelNPalabras.setText(
+                        "" + nPalabras);
+                vistaAjustesQueries.setVisible(
+                        true);
+                vistaAjustesQueries.setModal(
+                        true);
 
                 break;
             case "ActualizarNFilas":
                 nFilas = Integer.parseInt(vistaAjustesQueries.textNFilas.getText());
-                vistaAjustesQueries.labelNFilas.setText("" + nFilas);
+
+                vistaAjustesQueries.labelNFilas.setText(
+                        "" + nFilas);
                 break;
             case "ActualizarNPalabras":
                 nPalabras = Integer.parseInt(vistaAjustesQueries.textNPalabras.getText());
-                vistaAjustesQueries.labelNPalabras.setText("" + nPalabras);
+
+                vistaAjustesQueries.labelNPalabras.setText(
+                        "" + nPalabras);
                 break;
             case "Mostrar Opciones Corpus":
-                vistaAjustesCorpus.setVisible(true);
-                vistaAjustesCorpus.setModal(true);
+                vistaAjustesCorpus.setVisible(
+                        true);
+                vistaAjustesCorpus.setModal(
+                        true);
                 break;
             case "BuscarFichero":
                 parser.seleccionarFicheroCorpus();
+
                 break;
             case "BorrarCore":
                 try {
@@ -154,14 +190,37 @@ public class ControladorPrincipal implements ActionListener {
                 } catch (Exception ex) {
                     System.out.println("Error al parsear el core: " + ex.getMessage());
                 }
+
                 break;
+
+            case "MedColecction":
+                System.out.println(
+                        "Seleccionado el MedColection");
+                vistaAjustesCorpus.labelCorpus.setText(
+                        "MedColection");
+                parser.setCore(
+                        "MedColection");
+                break;
+
+            case "EnrichedMed":
+                System.out.println(
+                        "Seleccionado el enrichedMed");
+                vistaAjustesCorpus.labelCorpus.setText(
+                        "enrichedMed");
+                parser.setCore(
+                        "enrichedMed");
+                break;
+
             case "Mostrar Opciones Evaluacion":
-                vistaEvaluacion.setVisible(true);
-                vistaEvaluacion.setModal(true);
+                vistaEvaluacion.setVisible(
+                        true);
+                vistaEvaluacion.setModal(
+                        true);
                 break;
 
             case "GenerarEvaluacion":
                 String path = null;
+
                 try {
                     path = generadorFicheroTrec.generarFicheroConsultas(consultas.consultasTrec(nPalabras, nFilas));
                 } catch (IOException ex) {
@@ -169,6 +228,7 @@ public class ControladorPrincipal implements ActionListener {
                 }
 
                 String content = null;
+
                 try {
                     content = Files.readString(Paths.get(path));
                 } catch (IOException ex) {
@@ -176,16 +236,39 @@ public class ControladorPrincipal implements ActionListener {
                 }
 
                 JTextArea textArea = new JTextArea(content);
-                textArea.setEditable(false);
+
+                textArea.setEditable(
+                        false);
                 JScrollPane scrollPane = new JScrollPane(textArea);
 
-                JOptionPane.showMessageDialog(null, scrollPane, "Evaluation Results", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        null, scrollPane, "Evaluation Results", JOptionPane.INFORMATION_MESSAGE);
 
                 break;
 
             default:
-                System.out.println("Error al añadir los ActionListeners");
+                System.out.println(
+                        "Error al añadir los ActionListeners");
         }
+    }
+
+    private void formatear(String textoCompleto, StyledDocument doc) throws BadLocationException {
+
+        SimpleAttributeSet plainSet = new SimpleAttributeSet();
+        StyleConstants.setFontSize(plainSet, 12);
+        String[] splitted = textoCompleto.split("\\s+");
+        int n = 0;
+        for (String string : splitted) {
+            if (n > 13) {
+                doc.insertString(doc.getLength(), "\n", plainSet);
+                n = 0;
+            } else {
+                doc.insertString(doc.getLength(), " " + string, plainSet);
+                n++;
+            }
+        }
+        doc.insertString(doc.getLength(), "\n", plainSet);
+
     }
 
     private void addActionListeners() {
@@ -200,6 +283,8 @@ public class ControladorPrincipal implements ActionListener {
         vistaAjustesCorpus.buttomBorrarCore.addActionListener(this);
         vistaAjustesCorpus.buttomBuscarFichero.addActionListener(this);
         vistaAjustesCorpus.buttomParsearCore.addActionListener(this);
+        vistaAjustesCorpus.radioEnriched.addActionListener(this);
+        vistaAjustesCorpus.radioMedColecction.addActionListener(this);
 
         vistaEvaluacion.buttomEvaluar.addActionListener(this);
 

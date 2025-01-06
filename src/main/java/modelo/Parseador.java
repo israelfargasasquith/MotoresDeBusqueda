@@ -30,11 +30,13 @@ public class Parseador {
     private File parsingQueryFile;
     private SolrClient client;
     private Map<String, String> tokenExcluidos;
+    private String core;
 
     public Parseador(SolrClient client) {
         parsingCorpusFile = new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "corpusData" + File.separator + "MED.ALL");
         parsingQueryFile = new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "corpusData" + File.separator + "MED.QRY");
         this.client = client;
+        this.core = "MedColection";
         this.tokenExcluidos = new HashMap<>();
         String punctuation = "(),.-_?¿¡!\\{}[]:;\"<>|/@#$%^&*~`";
         for (char c : punctuation.toCharArray()) {
@@ -58,6 +60,10 @@ public class Parseador {
         }
 
     }
+    
+    public void setCore(String nuevo){
+        this.core = nuevo;
+    }
 
     public void seleccionarFicheroConsultas() {
         JFrame frame = new JFrame();
@@ -80,8 +86,8 @@ public class Parseador {
 
         try {
             for (SolrInputDocument solrInputDocument : docList) {
-                client.add("MedColection", solrInputDocument);
-                client.commit("MedColection");
+                client.add(core, solrInputDocument);
+                client.commit(core);
             }
 
         } catch (SolrServerException ex) {
