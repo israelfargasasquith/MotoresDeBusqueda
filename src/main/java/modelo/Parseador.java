@@ -37,17 +37,19 @@ public class Parseador {
         parsingQueryFile = new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "corpusData" + File.separator + "MED.QRY");
         this.client = client;
         this.core = "MedColection";
+
         this.tokenExcluidos = new HashMap<>();
-        String punctuation = "(),.-_?¿¡!\\{}[]:;\"<>|/@#$%^&*~`";
+        String punctuation = "(),.-_?¿¡!{}[]:;\"|/@#$%^&*~`";
         for (char c : punctuation.toCharArray()) {
             tokenExcluidos.put(String.valueOf(c), "-");
         }
+
     }
 
     public void seleccionarFicheroCorpus() {
         JFrame frame = new JFrame();
         frame.setAlwaysOnTop(true);
-        frame.setVisible(true); //solamente para que el filechoser salga por encima de la consola...
+        frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         JFileChooser tmp = new JFileChooser();
         tmp.setCurrentDirectory(new File(System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "corpusData"));
@@ -60,9 +62,13 @@ public class Parseador {
         }
 
     }
-    
-    public void setCore(String nuevo){
+
+    public void setCore(String nuevo) {
         this.core = nuevo;
+    }
+
+    public String getCore() {
+        return this.core;
     }
 
     public void seleccionarFicheroConsultas() {
@@ -100,97 +106,191 @@ public class Parseador {
     public ArrayList<String> parsearConsultas(int nConsultas, int nPalabras) throws FileNotFoundException, IOException {
         if (parsingQueryFile != null) {
 
-            BufferedReader br = new BufferedReader(new FileReader(parsingQueryFile));
-            String line;
-            StringBuilder wholeQuery = new StringBuilder();
-            int queryCount = 0;
-            ArrayList<String> consultas = new ArrayList<>();
-            String tmp;
-            String appendable = "";
-            while ((line = br.readLine()) != null && queryCount < nConsultas) {
-                if (line.startsWith(".I")) {
-                    if (wholeQuery.length() > 0) {
-                        if (nPalabras <= 0) {
-                            String splitWhole[] = wholeQuery.toString().split("\\s+");
-                            String wholeTogether = splitWhole[0];
-                            for (int i = 1; i < splitWhole.length; i++) {
-                                wholeTogether += "+" + splitWhole[i];
-                            }
-                            consultas.add(wholeTogether);
-                        } else {
-                            String[] splitted = wholeQuery.toString().split("\\s+");
-                            int i = 0;
-                            String queryString = "";
-                            for (String string : splitted) {
-                                if (i >= nPalabras) {
-                                    break;
+            if (core.equalsIgnoreCase("medcolection")) {
+
+                BufferedReader br = new BufferedReader(new FileReader(parsingQueryFile));
+                String line;
+                StringBuilder wholeQuery = new StringBuilder();
+                int queryCount = 0;
+                ArrayList<String> consultas = new ArrayList<>();
+                String tmp;
+                String appendable = "";
+                while ((line = br.readLine()) != null && queryCount < nConsultas) {
+                    if (line.startsWith(".I")) {
+                        if (wholeQuery.length() > 0) {
+                            if (nPalabras <= 0) {
+                                String splitWhole[] = wholeQuery.toString().split("\\s+");
+                                String wholeTogether = splitWhole[0];
+                                for (int i = 1; i < splitWhole.length; i++) {
+                                    wholeTogether += "+" + splitWhole[i];
                                 }
-                                if (i == 0) {
-                                    queryString = string;
-                                } else {
-                                    queryString += "+" + string;
+                                consultas.add(wholeTogether);
+                            } else {
+                                String[] splitted = wholeQuery.toString().split("\\s+");
+                                int i = 0;
+                                String queryString = "";
+                                for (String string : splitted) {
+                                    if (i >= nPalabras) {
+                                        break;
+                                    }
+                                    if (i == 0) {
+                                        queryString = string;
+                                    } else {
+                                        queryString += "+" + string;
+                                    }
+                                    i++;
                                 }
-                                i++;
+                                consultas.add(queryString);
                             }
-                            consultas.add(queryString);
+                            wholeQuery.setLength(0);
+                            queryCount++;
                         }
-                        wholeQuery.setLength(0);
-                        queryCount++;
-                    }
-                } else if (line.startsWith(".W")) {
-                } else {
-                    tmp = line.strip();
-                    for (char c : tmp.toCharArray()) {
-                        if (this.tokenExcluidos.get(String.valueOf(c)) == null) {
-                            appendable += String.valueOf(c);
+                    } else if (line.startsWith(".W")) {
+                    } else {
+                        tmp = line.strip();
+                        for (char c : tmp.toCharArray()) {
+                            if (this.tokenExcluidos.get(String.valueOf(c)) == null) {
+                                appendable += String.valueOf(c);
+                            }
                         }
-                    }
 
-                    wholeQuery.append(appendable);
-                    appendable = "";
+                        wholeQuery.append(appendable);
+                        appendable = "";
+                    }
                 }
-            }
 
-            if (wholeQuery.length() > 0 && queryCount < nConsultas) {
-                if (nPalabras <= 0) {
-                    String splitWhole[] = wholeQuery.toString().split("\\s+");
-                    String wholeTogether = splitWhole[0];
-                    for (int i=1;i<splitWhole.length;i++) {
-                        wholeTogether += "+" + splitWhole[i];
-                    }
-                    consultas.add(wholeTogether);
-                } else {
-                    String[] splitted = wholeQuery.toString().split("\\s+");
-                    StringBuilder queryString = new StringBuilder();
-
-                    for (int i = 0; i < Math.min(nPalabras, splitted.length); i++) {
-                        if (i > 0) {
-                            queryString.append("+");
+                if (wholeQuery.length() > 0 && queryCount < nConsultas) {
+                    if (nPalabras <= 0) {
+                        String splitWhole[] = wholeQuery.toString().split("\\s+");
+                        String wholeTogether = splitWhole[0];
+                        for (int i = 1; i < splitWhole.length; i++) {
+                            wholeTogether += "+" + splitWhole[i];
                         }
-                        queryString.append(splitted[i]);
-                    }
-                    appendable = "";
-                    tmp = queryString.toString();
-                    for (char c : tmp.toCharArray()) {
-                        if (this.tokenExcluidos.get(String.valueOf(c)) == null) {
-                            appendable += String.valueOf(c);
-                        }
-                    }
+                        consultas.add(wholeTogether);
+                    } else {
+                        String[] splitted = wholeQuery.toString().split("\\s+");
+                        StringBuilder queryString = new StringBuilder();
 
-                    consultas.add(appendable);
+                        for (int i = 0; i < Math.min(nPalabras, splitted.length); i++) {
+                            if (i > 0) {
+                                queryString.append("+");
+                            }
+                            queryString.append(splitted[i]);
+                        }
+                        appendable = "";
+                        tmp = queryString.toString();
+                        for (char c : tmp.toCharArray()) {
+                            if (this.tokenExcluidos.get(String.valueOf(c)) == null) {
+                                appendable += String.valueOf(c);
+                            }
+                        }
+
+                        consultas.add(appendable);
+                    }
                 }
-            }
 
-            br.close();
-            return consultas;
+                br.close();
+                return consultas;
+            } else if (core.equalsIgnoreCase("enrichedmed")) {
+                
+                BufferedReader br = new BufferedReader(new FileReader(parsingQueryFile));
+                String line;
+                StringBuilder wholeQuery = new StringBuilder();
+                int queryCount = 0;
+                ArrayList<String> consultas = new ArrayList<>();
+                String tmp;
+                String appendable = "";
+                while ((line = br.readLine()) != null && queryCount < nConsultas) {
+                    if (line.startsWith(".I")) {
+                        if (wholeQuery.length() > 0) {
+                            if (nPalabras <= 0) {
+                                String splitWhole[] = wholeQuery.toString().split("\\s+");
+                                String wholeTogether = splitWhole[0];
+                                for (int i = 1; i < splitWhole.length; i++) {
+                                    wholeTogether += "+" + splitWhole[i];
+                                }
+                                consultas.add(wholeTogether);
+                            } else {
+                                String[] splitted = wholeQuery.toString().split("\\s+");
+                                int i = 0;
+                                String queryString = "";
+                                for (String string : splitted) {
+                                    if (i >= nPalabras) {
+                                        break;
+                                    }
+                                    if (i == 0) {
+                                        queryString = string;
+                                    } else {
+                                        queryString += "+" + string;
+                                    }
+                                    i++;
+                                }
+                                consultas.add(queryString);
+                            }
+                            wholeQuery.setLength(0);
+                            queryCount++;
+                        }
+                    } else if (line.startsWith(".W")) {
+                    } else {
+                        tmp = line.strip();
+                        for (char c : tmp.toCharArray()) {
+                            if (this.tokenExcluidos.get(String.valueOf(c)) == null) {
+                                appendable += String.valueOf(c);
+                            }
+                        }
+
+                        wholeQuery.append(appendable);
+                        appendable = "";
+                    }
+                }
+
+                if (wholeQuery.length() > 0 && queryCount < nConsultas) {
+                    if (nPalabras <= 0) {
+                        String splitWhole[] = wholeQuery.toString().split("\\s+");
+                        String wholeTogether = splitWhole[0];
+                        for (int i = 1; i < splitWhole.length; i++) {
+                            wholeTogether += "+" + splitWhole[i];
+                        }
+                        consultas.add(wholeTogether);
+                    } else {
+                        String[] splitted = wholeQuery.toString().split("\\s+");
+                        StringBuilder queryString = new StringBuilder();
+
+                        for (int i = 0; i < Math.min(nPalabras, splitted.length); i++) {
+                            if (i > 0) {
+                                queryString.append("+");
+                            }
+                            queryString.append(splitted[i]);
+                        }
+                        appendable = "";
+                        tmp = queryString.toString();
+                        for (char c : tmp.toCharArray()) {
+                            if (this.tokenExcluidos.get(String.valueOf(c)) == null) {
+                                appendable += String.valueOf(c);
+                            }
+                        }
+
+                        consultas.add(appendable);
+                    }
+                }
+
+                br.close();
+                return consultas;
+
+            } else {
+                System.out.println("Error al seleccionar core en el parseador");
+                return null;
+            }
         } else {
             return null;
         }
 
     }
 
+
     public void parsearCorpus() throws Exception {
         if (parsingCorpusFile != null) {
+            if(core.equalsIgnoreCase("medcolection")){
             BufferedReader br = new BufferedReader(new FileReader(parsingCorpusFile));
             String line;
             StringBuilder wholePar = new StringBuilder();
@@ -231,7 +331,37 @@ public class Parseador {
             }
             this.addDocument(docList);
         }
+        }else if(core.equalsIgnoreCase("enrichedmed")){
+            dksbfjus
+        }
+/*
+        ADMINISTRATION
+AGE
+AREA
+BIOLOGICAL_ATTRIBUTE
+BIOLOGICAL_STRUCTURE
+CLINICAL_EVENT
+COREFERENCE
+DATE
+DETAILED_DESCRIPTION
+DIAGNOSTIC_PROCEDURE
+DISEASE_DISORDER
+DISTANCE
+DOSAGE
+DURATION
+FAMILY_HISTORY
+HISTORY
+LAB_VALUE
+MEDICATION
+NONBIOLOGICAL_LOCATION
+PERSONAL_BACKGROUND
+SEVERITY
+SEX
+SIGN_SYMPTOM
+THERAPEUTIC_PROCEDURE
+VOLUME
 
+        */
     }
 
 }

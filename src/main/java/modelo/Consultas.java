@@ -6,8 +6,6 @@ package modelo;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -28,12 +26,12 @@ public class Consultas {
         this.client = client;
     }
 
-    public SolrDocumentList buscar(String consulta, int nFilas, int nPalabras) {
+    public SolrDocumentList buscar(String consulta, int nFilas, int nPalabras,String core) {
         SolrQuery query = new SolrQuery().setQuery("texto:" + consulta).setRows(nFilas).setFields("I,score,texto").addSort("score", SolrQuery.ORDER.desc);
         QueryResponse response = null;
         SolrDocumentList docs = null;
         try {
-            response = client.query("MedColection", query);
+            response = client.query(core, query);
         } catch (SolrServerException ex) {
             System.out.println("Error al realizar la consulta " + consulta + " con error: " + ex.getMessage());
         } catch (IOException ex) {
@@ -57,7 +55,7 @@ public class Consultas {
         System.out.println("Todos los documentos borrados");
     }
 
-    public ArrayList<RespuestaTrec> consultasTrec(int nPalabras, int nFilas) throws IOException {
+    public ArrayList<RespuestaTrec> consultasTrec(int nPalabras, int nFilas,String core) throws IOException {
         ArrayList<SolrQuery> queries = new ArrayList<>();
         ArrayList<RespuestaTrec> respuestasList = new ArrayList<>();
         Parseador p = new Parseador(client);
@@ -75,7 +73,7 @@ public class Consultas {
         try {
 
             for (SolrQuery query : queries) {
-                tmp = client.query("MedColection", query);
+                tmp = client.query(core, query);
                 rsp.add(tmp);
             }
 
@@ -108,7 +106,7 @@ public class Consultas {
         return respuestasList;
     }
 
-    public void consultar(int nConsultas, int nPalabras, int nFilas) throws IOException {
+    public void consultar(int nConsultas, int nPalabras, int nFilas, String core) throws IOException {
         ArrayList<SolrQuery> queries = new ArrayList<>();
         Parseador p = new Parseador(client);
         ArrayList<String> consultas = p.parsearConsultas(nConsultas, nPalabras);
@@ -128,7 +126,7 @@ public class Consultas {
 
         try {
             for (SolrQuery query : queries) {
-                tmp = client.query("MedColection", query);
+                tmp = client.query(core, query);
                 rsp.add(tmp);
                 System.out.println("**************************************" + "\nQuery lanzada: " + query.getQuery() + "\n**************************************");
             }

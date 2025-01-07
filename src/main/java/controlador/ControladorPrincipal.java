@@ -77,6 +77,7 @@ public class ControladorPrincipal implements ActionListener {
         vistaAjustesCorpus = new VistaModalAjustesCorpus(vistaPrincipal, true);
         vistaAjustesCorpus.setVisible(false);
         vistaAjustesCorpus.setLocationRelativeTo(null);
+        vistaAjustesCorpus.labelCorpus.setText("MedColection");
 
         vistaEvaluacion = new VistaModalEvaluacion(vistaPrincipal, true);
         vistaEvaluacion.setVisible(false);
