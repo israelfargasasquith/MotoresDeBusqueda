@@ -192,7 +192,7 @@ public class Parseador {
                 br.close();
                 return consultas;
             } else if (core.equalsIgnoreCase("enrichedmed")) {
-                
+
                 BufferedReader br = new BufferedReader(new FileReader(parsingQueryFile));
                 String line;
                 StringBuilder wholeQuery = new StringBuilder();
@@ -287,81 +287,116 @@ public class Parseador {
 
     }
 
-
     public void parsearCorpus() throws Exception {
         if (parsingCorpusFile != null) {
-            if(core.equalsIgnoreCase("medcolection")){
-            BufferedReader br = new BufferedReader(new FileReader(parsingCorpusFile));
-            String line;
-            StringBuilder wholePar = new StringBuilder();
-            ArrayList<SolrInputDocument> docList = new ArrayList<>();
-            SolrInputDocument tmp;
-            String ridoffI = null;
-            int fixingI;
-            int documentCount = 0;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith(".I")) {
-                    if (wholePar.length() > 0) {
-                        tmp = new SolrInputDocument();
-                        tmp.addField("id", UUID.randomUUID().toString());
-                        ridoffI = line.substring(2).strip();
-                        fixingI = Integer.parseInt(ridoffI);
-                        fixingI--;
-                        ridoffI = "" + fixingI;
-                        tmp.addField("I", ridoffI);
-                        tmp.addField("texto", wholePar.toString());
-                        docList.add(tmp);
-                        wholePar.setLength(0);
+            if (core.equalsIgnoreCase("medcolection")) {
+                BufferedReader br = new BufferedReader(new FileReader(parsingCorpusFile));
+                String line;
+                StringBuilder wholePar = new StringBuilder();
+                ArrayList<SolrInputDocument> docList = new ArrayList<>();
+                SolrInputDocument tmp;
+                String ridoffI = null;
+                int fixingI;
+                int documentCount = 0;
+                while ((line = br.readLine()) != null) {
+                    if (line.startsWith(".I")) {
+                        if (wholePar.length() > 0) {
+                            tmp = new SolrInputDocument();
+                            tmp.addField("id", UUID.randomUUID().toString());
+                            ridoffI = line.substring(2).strip();
+                            fixingI = Integer.parseInt(ridoffI);
+                            fixingI--;
+                            ridoffI = "" + fixingI;
+                            tmp.addField("I", ridoffI);
+                            tmp.addField("texto", wholePar.toString());
+                            docList.add(tmp);
+                            wholePar.setLength(0);
+                        }
+                        documentCount++;
+                        System.out.println("***********************************************\nStarted writing Documento" + (documentCount) + ".txt");
+                    } else if (line.startsWith(".W")) {
+                    } else {
+                        System.out.println(line);
+                        wholePar.append(line.strip()).append(" ");
                     }
-                    documentCount++;
-                    System.out.println("***********************************************\nStarted writing Documento" + (documentCount) + ".txt");
-                } else if (line.startsWith(".W")) {
-                } else {
-                    System.out.println(line);
-                    wholePar.append(line.strip()).append(" ");
                 }
+                if (wholePar.length() > 0) { //Ultimo documento de la lista
+                    SolrInputDocument doc = new SolrInputDocument();
+                    doc.addField("id", UUID.randomUUID().toString());
+                    doc.addField("I", "" + 1033);
+                    doc.addField("texto", wholePar.toString());
+                    docList.add(doc);
+                    System.out.println("***********************************************\nFinished writing Documento" + documentCount + ".txt");
+                }
+                this.addDocument(docList);
+            } else if (core.equalsIgnoreCase("enrichedmed")) {
+                BufferedReader br = new BufferedReader(new FileReader(parsingCorpusFile));
+                String line;
+                StringBuilder wholePar = new StringBuilder();
+                ArrayList<SolrInputDocument> docList = new ArrayList<>();
+                
+                SolrInputDocument tmp;
+                String ridoffI = null;
+                int fixingI;
+                int documentCount = 0;
+                while ((line = br.readLine()) != null) {
+                    if (line.startsWith(".I")) {
+                        if (wholePar.length() > 0) {
+                            tmp = new SolrInputDocument();
+                            tmp.addField("id", UUID.randomUUID().toString());
+                            ridoffI = line.substring(2).strip();
+                            fixingI = Integer.parseInt(ridoffI);
+                            fixingI--;
+                            ridoffI = "" + fixingI;
+                            tmp.addField("I", ridoffI);
+                            tmp.addField("texto", wholePar.toString());
+                            tmp.addField("ADMINISTRATION", );
+                            tmp.addField("AGE", );
+                            tmp.addField("AREA", );
+                            tmp.addField("BIOLOGICAL_STRUCTURE", );
+                            tmp.addField("CLINICAL_EVENT", );
+                            tmp.addField("COREFERENCE", );
+                            tmp.addField("DATE", );
+                            tmp.addField("DETAILED_DESCRIPTION", );
+                            tmp.addField("DIAGNOSTIC_PROCEDURE", );
+                            tmp.addField("DISEASE_DISORDER", );
+                            tmp.addField("DISTANCE", );
+                            tmp.addField("DOSAGE", );
+                            tmp.addField("DURATION", );
+                            tmp.addField("FAMILY_HISTORY", );
+                            tmp.addField("HISTORY", );
+                            tmp.addField("LAB_VALUE", );
+                            tmp.addField("MEDICATION", );
+                            tmp.addField("NONBIOLOGICAL_LOCATION", );
+                            tmp.addField("PERSONAL_BACKGROUND", );
+                            tmp.addField("SEVERITY", );
+                            tmp.addField("SEX", );
+                            tmp.addField("THERAPEUTIC_PROCEDURE", );
+                            tmp.addField("VOLUME", );
+                            docList.add(tmp);
+                            wholePar.setLength(0);
+                        }
+                        documentCount++;
+                        System.out.println("***********************************************\nStarted writing Documento" + (documentCount) + ".txt");
+                    } else if (line.startsWith(".W")) {
+                    } else {
+                        System.out.println(line);
+                        wholePar.append(line.strip()).append(" ");
+                    }
+                }
+                if (wholePar.length() > 0) { //Ultimo documento de la lista
+                    SolrInputDocument doc = new SolrInputDocument();
+                    doc.addField("id", UUID.randomUUID().toString());
+                    doc.addField("I", "" + 1033);
+                    doc.addField("texto", wholePar.toString());
+                    docList.add(doc);
+                    System.out.println("***********************************************\nFinished writing Documento" + documentCount + ".txt");
+                }
+                this.addDocument(docList);
+            } else {
+                throw new Exception("Error al asignar el core, el asignado es: " + core);
             }
-            if (wholePar.length() > 0) { //Ultimo documento de la lista
-                SolrInputDocument doc = new SolrInputDocument();
-                doc.addField("id", UUID.randomUUID().toString());
-                doc.addField("I", "" + 1033);
-                doc.addField("texto", wholePar.toString());
-                docList.add(doc);
-                System.out.println("***********************************************\nFinished writing Documento" + documentCount + ".txt");
-            }
-            this.addDocument(docList);
         }
-        }else if(core.equalsIgnoreCase("enrichedmed")){
-            dksbfjus
-        }
-/*
-        ADMINISTRATION
-AGE
-AREA
-BIOLOGICAL_ATTRIBUTE
-BIOLOGICAL_STRUCTURE
-CLINICAL_EVENT
-COREFERENCE
-DATE
-DETAILED_DESCRIPTION
-DIAGNOSTIC_PROCEDURE
-DISEASE_DISORDER
-DISTANCE
-DOSAGE
-DURATION
-FAMILY_HISTORY
-HISTORY
-LAB_VALUE
-MEDICATION
-NONBIOLOGICAL_LOCATION
-PERSONAL_BACKGROUND
-SEVERITY
-SEX
-SIGN_SYMPTOM
-THERAPEUTIC_PROCEDURE
-VOLUME
-
-        */
     }
 
 }
